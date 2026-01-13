@@ -1,9 +1,13 @@
 {
   "id": "char-001",
   "name": "Aldric the Bold",
-  "className": "Fighter",
-  "subclassName": "Battle Master",
-  "level": 5,
+  "classes": [
+    {
+      "className": "Fighter",
+      "subclassName": "Battle Master",
+      "level": 5
+    }
+  ],
   "race": "Human",
   "background": "Soldier",
   "alignment": "Lawful Good",

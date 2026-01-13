@@ -11,13 +11,25 @@ import { AbilityScore } from './classDefinition';
 // Re-export for convenience
 export type { AbilityScore };
 
+export interface CharacterClass {
+  className: string; // References a ClassDefinition file
+  subclassName?: string;
+  level: number;
+}
+
 export interface Character {
   // Basic info
   id: string;
   name: string;
-  className: string; // References a ClassDefinition file
-  subclassName?: string;
-  level: number;
+
+  // Multi-class support: can have multiple classes
+  classes: CharacterClass[];
+
+  // Legacy single-class fields (for backwards compatibility)
+  className?: string; // Deprecated: use classes instead
+  subclassName?: string; // Deprecated: use classes instead
+  level?: number; // Deprecated: use totalLevel calculated from classes
+
   race: string;
   background: string;
   alignment?: string;
@@ -77,6 +89,7 @@ export interface CharacterResource {
   max: number;
   rechargeOn: 'short-rest' | 'long-rest' | 'dawn' | 'manual' | 'none';
   displayType: 'slots' | 'number' | 'bar';
+  displayLocation?: 'hotbar' | 'panel' | 'auto';
 }
 
 export interface CharacterFeature {

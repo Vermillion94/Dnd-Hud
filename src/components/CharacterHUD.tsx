@@ -3,16 +3,33 @@ import ResourceTracker from './ResourceTracker';
 import SpellManager from './SpellManager';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { getTotalLevel, getClassDisplayString, migrateToMultiClass } from '../utils/characterUtils';
 
 interface CharacterHUDProps {
   character: Character;
   onCharacterUpdate: (character: Character) => void;
 }
 
-type TabType = 'portrait' | 'inventory' | 'features' | 'spells';
+type TabType = 'portrait' | 'inventory' | 'features' | 'spells' | 'resources';
 
-function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
+function CharacterHUD({ character: rawCharacter, onCharacterUpdate }: CharacterHUDProps) {
   const [activeTab, setActiveTab] = useState<TabType>('portrait');
+
+  // Migrate legacy single-class characters to multi-class format
+  const character = migrateToMultiClass(rawCharacter);
+  const totalLevel = getTotalLevel(character);
+  const classDisplay = getClassDisplayString(character);
+
+  // Determine which resources go on hotbar (max <= 6 or explicitly set to 'hotbar')
+  const shouldShowOnHotbar = (resource: Character['resources'][0]): boolean => {
+    if (resource.displayLocation === 'panel') return false;
+    if (resource.displayLocation === 'hotbar') return true;
+    // Auto: use heuristic of max <= 6
+    return resource.max <= 6;
+  };
+
+  const hotbarResources = character.resources.filter(shouldShowOnHotbar);
+  const panelResources = character.resources.filter((r) => !shouldShowOnHotbar(r));
 
   const handleResourceUpdate = (resourceName: string, newCurrent: number) => {
     const updatedCharacter = {
@@ -20,6 +37,20 @@ function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
       resources: character.resources.map((res) =>
         res.name === resourceName ? { ...res, current: newCurrent } : res
       ),
+    };
+    onCharacterUpdate(updatedCharacter);
+  };
+
+  const handleSpellSlotUpdate = (level: number, newUsed: number) => {
+    if (!character.spellcasting) return;
+    const updatedCharacter = {
+      ...character,
+      spellcasting: {
+        ...character.spellcasting,
+        spellSlots: character.spellcasting.spellSlots.map((slot) =>
+          slot.level === level ? { ...slot, used: Math.max(0, Math.min(newUsed, slot.max)) } : slot
+        ),
+      },
     };
     onCharacterUpdate(updatedCharacter);
   };
@@ -60,6 +91,15 @@ function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
         ...resource,
         current: resource.max,
       })),
+      spellcasting: character.spellcasting
+        ? {
+            ...character.spellcasting,
+            spellSlots: character.spellcasting.spellSlots.map((slot) => ({
+              ...slot,
+              used: 0,
+            })),
+          }
+        : undefined,
     };
     onCharacterUpdate(updatedCharacter);
   };
@@ -143,21 +183,68 @@ function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
           </div>
         ) : null;
 
+      case 'resources':
+        return (
+          <div className="h-full overflow-y-auto px-4">
+            <h3 className="text-xl font-medieval text-dnd-accent mb-4 sticky top-0 bg-gray-900/95 py-2">
+              All Resources
+            </h3>
+            <div className="space-y-4 pb-4">
+              {character.resources.map((resource) => (
+                <div key={resource.name} className="bg-gray-800/50 rounded-lg p-4 border border-dnd-accent/30">
+                  <ResourceTracker
+                    name={resource.name}
+                    icon={resource.icon}
+                    current={resource.current}
+                    max={resource.max}
+                    color="blue"
+                    displayType={resource.displayType}
+                    rechargeOn={resource.rechargeOn}
+                    onUpdate={(newCurrent) => handleResourceUpdate(resource.name, newCurrent)}
+                  />
+                </div>
+              ))}
+              {character.spellcasting && (
+                <div className="mt-4">
+                  <h4 className="text-lg font-medieval text-dnd-accent mb-3">Spell Slots</h4>
+                  <div className="space-y-2">
+                    {character.spellcasting.spellSlots
+                      .filter((slot) => slot.max > 0)
+                      .map((slot) => (
+                        <div
+                          key={slot.level}
+                          className="bg-gray-800/50 rounded-lg p-4 border border-purple-500/30"
+                        >
+                          <SpellSlotTracker
+                            level={slot.level}
+                            max={slot.max}
+                            used={slot.used}
+                            onUpdate={(newUsed) => handleSpellSlotUpdate(slot.level, newUsed)}
+                          />
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+
       default:
         return null;
     }
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-wood-dark to-gray-900">
       {/* Top Currency Bar */}
-      <div className="bg-gradient-to-b from-gray-900 via-gray-800/95 to-transparent border-b border-yellow-600/30">
-        <div className="px-6 py-2 flex items-center justify-between">
+      <div className="bg-wood-texture border-b-4 border-dnd-accent/60 shadow-medieval relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent" />
+        <div className="px-6 py-3 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-8">
-            <div className="text-dnd-accent font-medieval text-2xl">{character.name}</div>
-            <div className="text-gray-400 text-sm">
-              Level {character.level} {character.race} {character.className}
-              {character.subclassName && ` (${character.subclassName})`}
+            <div className="text-dnd-accent font-medieval text-2xl drop-shadow-lg">{character.name}</div>
+            <div className="text-gray-300 text-sm font-medieval">
+              {character.race} {classDisplay}
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -191,11 +278,16 @@ function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
           <div className="grid grid-cols-12 gap-4">
             {/* Left Sidebar - Ability Scores & Core Stats */}
             <div className="col-span-2 space-y-3">
-              <div className="bg-gray-900/90 border-2 border-yellow-600/50 rounded-lg p-3">
-                <div className="text-xs font-bold text-dnd-accent mb-2 text-center">
+              <div className="relative bg-wood-texture border-4 border-dnd-accent/70 rounded-lg p-3 shadow-medieval overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-black/50 via-transparent to-black/30" />
+                <OrnateCorner position="top-left" />
+                <OrnateCorner position="top-right" />
+                <OrnateCorner position="bottom-left" />
+                <OrnateCorner position="bottom-right" />
+                <div className="relative z-10 text-xs font-bold font-medieval text-dnd-accent mb-2 text-center drop-shadow-lg">
                   ABILITY SCORES
                 </div>
-                <div className="space-y-2">
+                <div className="relative z-10 space-y-2">
                   {Object.entries(character.abilityScores).map(([ability, score]) => (
                     <AbilityScoreCompact
                       key={ability}
@@ -207,11 +299,16 @@ function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
                 </div>
               </div>
 
-              <div className="bg-gray-900/90 border-2 border-yellow-600/50 rounded-lg p-3">
-                <div className="text-xs font-bold text-dnd-accent mb-2 text-center">
+              <div className="relative bg-wood-texture border-4 border-dnd-accent/70 rounded-lg p-3 shadow-medieval overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-black/50 via-transparent to-black/30" />
+                <OrnateCorner position="top-left" />
+                <OrnateCorner position="top-right" />
+                <OrnateCorner position="bottom-left" />
+                <OrnateCorner position="bottom-right" />
+                <div className="relative z-10 text-xs font-bold font-medieval text-dnd-accent mb-2 text-center drop-shadow-lg">
                   CORE STATS
                 </div>
-                <div className="space-y-2">
+                <div className="relative z-10 space-y-2">
                   <StatLineCompact label="SPEED" value={`${character.speed} ft`} />
                   <StatLineCompact label="INIT" value={`+${character.initiative}`} />
                   <StatLineCompact label="PROF" value={`+${character.proficiencyBonus}`} />
@@ -241,6 +338,12 @@ function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
                   icon="⭐"
                   label="Features"
                 />
+                <TabButton
+                  active={activeTab === 'resources'}
+                  onClick={() => setActiveTab('resources')}
+                  icon="⚡"
+                  label="Resources"
+                />
                 {character.spellcasting && (
                   <TabButton
                     active={activeTab === 'spells'}
@@ -253,16 +356,21 @@ function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
 
               {/* Tab Content */}
               <div
-                className="relative bg-gradient-to-b from-gray-900 to-gray-800 border-4 border-yellow-600/50 rounded-lg p-8 flex items-center justify-center"
+                className="relative bg-wood-texture border-4 border-dnd-accent/70 rounded-lg p-8 flex items-center justify-center shadow-medieval overflow-hidden"
                 style={{ height: '400px' }}
               >
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60" />
+                <OrnateCorner position="top-left" />
+                <OrnateCorner position="top-right" />
+                <OrnateCorner position="bottom-left" />
+                <OrnateCorner position="bottom-right" />
                 <motion.div
                   key={activeTab}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="w-full h-full flex items-center justify-center"
+                  className="relative z-10 w-full h-full flex items-center justify-center"
                 >
                   {renderTabContent()}
                 </motion.div>
@@ -275,19 +383,25 @@ function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleShortRest}
-                className="w-full py-4 bg-blue-900/50 border-2 border-blue-600 rounded-lg text-white font-semibold hover:bg-blue-900/70 transition-colors"
+                className="relative w-full py-4 bg-wood-texture border-4 border-blue-600/80 rounded-lg text-white font-medieval font-semibold hover:border-blue-400 transition-colors shadow-medieval overflow-hidden"
               >
-                <div className="text-2xl mb-1">☕</div>
-                <div className="text-sm">Short Rest</div>
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-900/60 to-blue-950/80" />
+                <div className="relative z-10">
+                  <div className="text-2xl mb-1">☕</div>
+                  <div className="text-sm drop-shadow-lg">Short Rest</div>
+                </div>
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleLongRest}
-                className="w-full py-4 bg-purple-900/50 border-2 border-purple-600 rounded-lg text-white font-semibold hover:bg-purple-900/70 transition-colors"
+                className="relative w-full py-4 bg-wood-texture border-4 border-purple-600/80 rounded-lg text-white font-medieval font-semibold hover:border-purple-400 transition-colors shadow-medieval overflow-hidden"
               >
-                <div className="text-2xl mb-1">🛏️</div>
-                <div className="text-sm">Long Rest</div>
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 to-purple-950/80" />
+                <div className="relative z-10">
+                  <div className="text-2xl mb-1">🛏️</div>
+                  <div className="text-sm drop-shadow-lg">Long Rest</div>
+                </div>
               </motion.button>
             </div>
           </div>
@@ -296,10 +410,11 @@ function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
 
       {/* Bottom HUD - Resources & HP */}
       <div className="mt-4">
-        {/* Resources Bar */}
-        <div className="bg-gradient-to-t from-gray-900/95 via-gray-800/95 to-transparent border-t border-yellow-600/30 px-6 py-3">
-          <div className="max-w-7xl mx-auto flex items-center gap-4">
-            {character.resources.map((resource) => (
+        {/* Resources Bar - Hotbar only (resources with max <= 6) */}
+        <div className="relative bg-wood-texture border-t-4 border-dnd-accent/60 px-6 py-3 shadow-medieval">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+          <div className="relative z-10 max-w-7xl mx-auto flex items-center gap-3">
+            {hotbarResources.map((resource) => (
               <div key={resource.name} className="flex-1">
                 <ResourceTracker
                   name={resource.name}
@@ -313,17 +428,31 @@ function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
                 />
               </div>
             ))}
+            {/* Spell Slots */}
+            {character.spellcasting?.spellSlots
+              .filter((slot) => slot.max > 0)
+              .map((slot) => (
+                <SpellSlotTracker
+                  key={slot.level}
+                  level={slot.level}
+                  max={slot.max}
+                  used={slot.used}
+                  onUpdate={(newUsed) => handleSpellSlotUpdate(slot.level, newUsed)}
+                />
+              ))}
           </div>
         </div>
 
         {/* HP Bar & AC Shield */}
-        <div className="bg-gray-900/98 border-t-4 border-yellow-600/50 px-6 py-4">
-          <div className="max-w-7xl mx-auto flex items-center gap-6">
+        <div className="relative bg-wood-texture border-t-4 border-dnd-accent/60 px-6 py-4 shadow-medieval">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/70" />
+          <div className="relative z-10 max-w-7xl mx-auto flex items-center gap-6">
             {/* AC Shield */}
             <div className="relative flex-shrink-0">
-              <div className="w-24 h-28 bg-gradient-to-br from-gray-700 to-gray-900 rounded-lg border-4 border-yellow-600 flex flex-col items-center justify-center shadow-lg">
-                <div className="text-xs text-gray-400 uppercase font-bold">AC</div>
-                <div className="text-4xl font-bold text-dnd-accent">
+              <div className="relative w-24 h-28 bg-wood-texture rounded-lg border-4 border-dnd-accent flex flex-col items-center justify-center shadow-medieval overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-700/50 to-gray-900/80" />
+                <div className="relative z-10 text-xs text-gray-400 uppercase font-bold font-medieval">AC</div>
+                <div className="relative z-10 text-4xl font-bold text-dnd-accent drop-shadow-lg">
                   {character.armorClass}
                 </div>
               </div>
@@ -334,7 +463,7 @@ function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">❤️</span>
-                  <span className="font-medieval text-xl text-white">Hit Points</span>
+                  <span className="font-medieval text-xl text-white drop-shadow-lg">Hit Points</span>
                 </div>
                 <div className="flex items-center gap-4">
                   <button
@@ -406,14 +535,15 @@ function TabButton({
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       onClick={onClick}
-      className={`flex-1 py-3 rounded-lg border-2 font-semibold transition-colors ${
+      className={`relative flex-1 py-3 rounded-lg border-3 font-medieval font-semibold transition-colors overflow-hidden ${
         active
-          ? 'bg-dnd-accent text-dnd-bg border-dnd-accent'
-          : 'bg-gray-800 text-white border-gray-700 hover:border-gray-600'
+          ? 'bg-dnd-accent text-dnd-bg border-dnd-accent shadow-medieval'
+          : 'bg-wood-texture text-white border-dnd-accent/50 hover:border-dnd-accent shadow-lg'
       }`}
     >
-      <span className="mr-2">{icon}</span>
-      {label}
+      {!active && <div className="absolute inset-0 bg-gradient-to-br from-gray-800/80 to-gray-900/90" />}
+      <span className="relative z-10 mr-2">{icon}</span>
+      <span className="relative z-10">{label}</span>
     </motion.button>
   );
 }
@@ -428,11 +558,11 @@ function AbilityScoreCompact({
   modifier: number;
 }) {
   return (
-    <div className="flex items-center justify-between bg-gray-800/50 rounded px-2 py-1">
-      <span className="text-xs text-gray-400 uppercase font-bold">{name}</span>
+    <div className="flex items-center justify-between bg-black/40 rounded border border-dnd-accent/30 px-2 py-1 shadow-sm">
+      <span className="text-xs text-gray-300 uppercase font-bold font-medieval">{name}</span>
       <div className="flex items-center gap-2">
         <span className="text-lg font-bold text-white">{score}</span>
-        <span className="text-sm text-dnd-accent">
+        <span className="text-sm text-dnd-accent font-semibold">
           {modifier >= 0 ? '+' : ''}
           {modifier}
         </span>
@@ -443,8 +573,8 @@ function AbilityScoreCompact({
 
 function StatLineCompact({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between bg-gray-800/50 rounded px-2 py-1">
-      <span className="text-xs text-gray-400 uppercase font-bold">{label}</span>
+    <div className="flex items-center justify-between bg-black/40 rounded border border-dnd-accent/30 px-2 py-1 shadow-sm">
+      <span className="text-xs text-gray-300 uppercase font-bold font-medieval">{label}</span>
       <span className="text-sm font-bold text-white">{value}</span>
     </div>
   );
@@ -466,6 +596,77 @@ function CurrencyDisplay({
         <div className="text-xs text-gray-400">{label}</div>
         <div className="text-sm font-bold text-white">{value}</div>
       </div>
+    </div>
+  );
+}
+
+function SpellSlotTracker({
+  level,
+  max,
+  used,
+  onUpdate,
+}: {
+  level: number;
+  max: number;
+  used: number;
+  onUpdate: (newUsed: number) => void;
+}) {
+  const available = max - used;
+
+  return (
+    <div className="flex flex-col items-center gap-1 px-2">
+      <div className="text-[10px] text-purple-400 font-bold font-medieval uppercase">
+        Level {level}
+      </div>
+      <div className="flex items-center gap-1">
+        {Array.from({ length: max }).map((_, i) => {
+          const isUsed = i < used;
+          return (
+            <motion.button
+              key={i}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => onUpdate(isUsed ? i : i + 1)}
+              className={`w-5 h-5 rounded-full border-2 transition-all ${
+                isUsed
+                  ? 'bg-gray-700 border-gray-600 opacity-40'
+                  : 'bg-gradient-to-br from-purple-500 to-purple-700 border-purple-400 shadow-lg shadow-purple-500/50'
+              }`}
+            >
+              <span className="text-[10px]">✨</span>
+            </motion.button>
+          );
+        })}
+      </div>
+      <div className="text-[10px] text-gray-400">
+        {available}/{max}
+      </div>
+    </div>
+  );
+}
+
+function OrnateCorner({ position }: { position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' }) {
+  const positionClasses = {
+    'top-left': 'top-0 left-0',
+    'top-right': 'top-0 right-0 rotate-90',
+    'bottom-left': 'bottom-0 left-0 -rotate-90',
+    'bottom-right': 'bottom-0 right-0 rotate-180',
+  };
+
+  return (
+    <div className={`absolute ${positionClasses[position]} w-8 h-8 pointer-events-none z-20`}>
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M0 0 L12 0 L8 4 L12 8 L8 12 L4 8 L0 12 Z"
+          fill="currentColor"
+          className="text-dnd-accent opacity-80"
+        />
+        <path
+          d="M0 0 L8 0 L5 3 L8 6 L5 9 L3 6 L0 9 Z"
+          fill="currentColor"
+          className="text-dnd-accent opacity-50"
+        />
+      </svg>
     </div>
   );
 }

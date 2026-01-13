@@ -9,6 +9,7 @@ import {
   exportCharacter,
   loadExampleCharacter,
   importClassDefinition,
+  loadExampleClass,
 } from './utils/fileImportExport';
 import {
   saveCharacterToStorage,
@@ -58,11 +59,16 @@ function App() {
     }
   };
 
-  const handleLoadExample = async () => {
+  const handleLoadExample = async (type: 'fighter' | 'wizard') => {
     try {
       setError(null);
-      const example = await loadExampleCharacter();
+      const example = await loadExampleCharacter(type);
       setCharacter(example);
+
+      // Also load the corresponding class definition
+      const className = type === 'fighter' ? 'Fighter' : 'Wizard';
+      const classDef = await loadExampleClass(className as 'Fighter' | 'Wizard');
+      setClassDefinition(classDef);
     } catch (err) {
       setError('Failed to load example character');
     }
@@ -198,12 +204,21 @@ function App() {
               >
                 Import Character
               </button>
-              <button
-                onClick={handleLoadExample}
-                className="px-8 py-4 bg-gray-700 text-white font-semibold rounded-lg hover:bg-gray-600 transition-colors"
-              >
-                Load Example Character
-              </button>
+              <div className="text-sm text-gray-400 mb-1">Or try an example:</div>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => handleLoadExample('fighter')}
+                  className="px-6 py-3 bg-red-900/50 border-2 border-red-700 text-white font-semibold rounded-lg hover:bg-red-900/70 transition-colors"
+                >
+                  ⚔️ Fighter Example
+                </button>
+                <button
+                  onClick={() => handleLoadExample('wizard')}
+                  className="px-6 py-3 bg-purple-900/50 border-2 border-purple-700 text-white font-semibold rounded-lg hover:bg-purple-900/70 transition-colors"
+                >
+                  ✨ Wizard Example
+                </button>
+              </div>
             </div>
 
             <div className="mt-12 text-left bg-dnd-card p-6 rounded-lg">

@@ -102,12 +102,26 @@ export const exportClassDefinition = (classDef: ClassDefinition) => {
 /**
  * Load example character (for demo purposes)
  */
-export const loadExampleCharacter = async (): Promise<Character> => {
+export const loadExampleCharacter = async (type: 'fighter' | 'wizard' = 'fighter'): Promise<Character> => {
   try {
-    const response = await fetch('/src/schemas/example-character.json');
+    const filename = type === 'wizard' ? 'example-wizard.json' : 'example-character.json';
+    const response = await fetch(`/src/schemas/${filename}`);
     if (!response.ok) throw new Error('Failed to load example character');
     return await response.json();
   } catch (error) {
     throw new Error('Failed to load example character');
+  }
+};
+
+/**
+ * Load example class definition (for demo purposes)
+ */
+export const loadExampleClass = async (className: 'Fighter' | 'Wizard'): Promise<ClassDefinition> => {
+  try {
+    const response = await fetch(`/src/schemas/${className}.json`);
+    if (!response.ok) throw new Error('Failed to load example class');
+    return await response.json();
+  } catch (error) {
+    throw new Error('Failed to load example class');
   }
 };

@@ -120,6 +120,7 @@ export interface ResourceGrant {
   rechargeOn: 'short-rest' | 'long-rest' | 'dawn' | 'manual' | 'none';
   displayType: 'slots' | 'number' | 'bar';
   conditional?: string; // e.g., "School of Evocation" - only grant if this condition is met
+  displayLocation?: 'hotbar' | 'panel' | 'auto'; // Where to display this resource. 'auto' uses max <= 6 heuristic
 }
 
 export interface SpellcastingDefinition {

@@ -77,6 +77,7 @@ export interface CharacterResource {
   max: number;
   rechargeOn: 'short-rest' | 'long-rest' | 'dawn' | 'manual' | 'none';
   displayType: 'slots' | 'number' | 'bar';
+  displayLocation?: 'hotbar' | 'panel' | 'auto';
 }
 
 export interface CharacterFeature {

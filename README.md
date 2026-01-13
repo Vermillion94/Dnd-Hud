@@ -8,16 +8,20 @@ A dynamic, visual, and animated character management system for D&D - like the i
 - **Visual Resource Tracking** - Dynamic HP bars, spell slots, and class features with beautiful animations
 - **Inventory Management** - Track items, equipment, gold, and treasure with an intuitive interface
 - **Character Information** - Stats, AC, skills, spells, features, and proficiencies at your fingertips
+- **Level-Up Wizard** - Baldur's Gate 3 style guided leveling with choices and options from class JSON definitions
+- **Spell Management** - Full spellcasting interface for prepared/known spells with spell slot tracking
+- **Rest System** - Short/long rest buttons that intelligently restore appropriate resources
+- **Dice Roller** - Integrated dice rolling for attacks, saves, and checks with history
 - **Auto-Save** - Character data automatically saved to local storage
 - **Import/Export** - Portable character files you can share and backup
 - **Offline First** - Works without internet after initial load (PWA)
 - **System Agnostic** - JSON-driven design means any edition or homebrew system works
 
 ### Future Features (Planned)
-- **Level-Up Wizard** - Baldur's Gate 3 style guided leveling with choices and options
-- **Spell Management** - Full spellcasting interface for prepared/known spells
-- **Rest System** - Short/long rest buttons that restore appropriate resources
-- **Dice Roller** - Integrated dice rolling for attacks, saves, and checks
+- **Character Creation Wizard** - Guided character creation from scratch
+- **Combat Tracker** - Initiative tracking and combat management
+- **Notes & Journal** - Session notes and character journal
+- **Party Management** - Manage multiple characters and party composition
 
 ## Technology Stack
 
@@ -323,18 +327,23 @@ This project is a tool/viewer. The code itself is open source.
 - [x] Local storage and auto-save
 - [x] PWA configuration
 
-### Phase 2 (Coming Soon)
-- [ ] Level-up wizard
-- [ ] Spell management interface
-- [ ] Rest system (short/long rest)
-- [ ] Character creation wizard
+### Phase 2 (✅ Complete)
+- [x] Level-up wizard with class definition integration
+- [x] Spell management interface with slot tracking
+- [x] Rest system (short/long rest)
+- [x] Dice roller with history
 
-### Phase 3 (Future)
-- [ ] Dice roller integration
+### Phase 3 (Coming Soon)
+- [ ] Character creation wizard
 - [ ] Combat tracker
 - [ ] Notes and journal
 - [ ] Party management
+
+### Phase 4 (Future)
 - [ ] Cloud sync (optional)
+- [ ] Homebrew content editor
+- [ ] Multi-character party view
+- [ ] Campaign management tools
 
 ## Acknowledgments
 

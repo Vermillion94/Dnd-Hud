@@ -24,6 +24,20 @@ function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
     onCharacterUpdate(updatedCharacter);
   };
 
+  const handleSpellSlotUpdate = (level: number, newUsed: number) => {
+    if (!character.spellcasting) return;
+    const updatedCharacter = {
+      ...character,
+      spellcasting: {
+        ...character.spellcasting,
+        spellSlots: character.spellcasting.spellSlots.map((slot) =>
+          slot.level === level ? { ...slot, used: Math.max(0, Math.min(newUsed, slot.max)) } : slot
+        ),
+      },
+    };
+    onCharacterUpdate(updatedCharacter);
+  };
+
   const handleHPUpdate = (current: number) => {
     const updatedCharacter = {
       ...character,
@@ -60,6 +74,15 @@ function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
         ...resource,
         current: resource.max,
       })),
+      spellcasting: character.spellcasting
+        ? {
+            ...character.spellcasting,
+            spellSlots: character.spellcasting.spellSlots.map((slot) => ({
+              ...slot,
+              used: 0,
+            })),
+          }
+        : undefined,
     };
     onCharacterUpdate(updatedCharacter);
   };
@@ -298,7 +321,7 @@ function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
       <div className="mt-4">
         {/* Resources Bar */}
         <div className="bg-gradient-to-t from-gray-900/95 via-gray-800/95 to-transparent border-t border-yellow-600/30 px-6 py-3">
-          <div className="max-w-7xl mx-auto flex items-center gap-4">
+          <div className="max-w-7xl mx-auto flex items-center gap-3">
             {character.resources.map((resource) => (
               <div key={resource.name} className="flex-1">
                 <ResourceTracker
@@ -313,6 +336,18 @@ function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
                 />
               </div>
             ))}
+            {/* Spell Slots */}
+            {character.spellcasting?.spellSlots
+              .filter((slot) => slot.max > 0)
+              .map((slot) => (
+                <SpellSlotTracker
+                  key={slot.level}
+                  level={slot.level}
+                  max={slot.max}
+                  used={slot.used}
+                  onUpdate={(newUsed) => handleSpellSlotUpdate(slot.level, newUsed)}
+                />
+              ))}
           </div>
         </div>
 
@@ -465,6 +500,51 @@ function CurrencyDisplay({
       <div className="text-right">
         <div className="text-xs text-gray-400">{label}</div>
         <div className="text-sm font-bold text-white">{value}</div>
+      </div>
+    </div>
+  );
+}
+
+function SpellSlotTracker({
+  level,
+  max,
+  used,
+  onUpdate,
+}: {
+  level: number;
+  max: number;
+  used: number;
+  onUpdate: (newUsed: number) => void;
+}) {
+  const available = max - used;
+
+  return (
+    <div className="flex flex-col items-center gap-1 px-2">
+      <div className="text-[10px] text-purple-400 font-bold uppercase">
+        Level {level}
+      </div>
+      <div className="flex items-center gap-1">
+        {Array.from({ length: max }).map((_, i) => {
+          const isUsed = i < used;
+          return (
+            <motion.button
+              key={i}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => onUpdate(isUsed ? i : i + 1)}
+              className={`w-5 h-5 rounded-full border-2 transition-all ${
+                isUsed
+                  ? 'bg-gray-700 border-gray-600 opacity-40'
+                  : 'bg-gradient-to-br from-purple-500 to-purple-700 border-purple-400 shadow-lg shadow-purple-500/50'
+              }`}
+            >
+              <span className="text-[10px]">✨</span>
+            </motion.button>
+          );
+        })}
+      </div>
+      <div className="text-[10px] text-gray-400">
+        {available}/{max}
       </div>
     </div>
   );

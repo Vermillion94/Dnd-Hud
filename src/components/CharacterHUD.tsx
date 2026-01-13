@@ -3,6 +3,7 @@ import ResourceTracker from './ResourceTracker';
 import SpellManager from './SpellManager';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { getTotalLevel, getClassDisplayString, migrateToMultiClass } from '../utils/characterUtils';
 
 interface CharacterHUDProps {
   character: Character;
@@ -11,8 +12,13 @@ interface CharacterHUDProps {
 
 type TabType = 'portrait' | 'inventory' | 'features' | 'spells' | 'resources';
 
-function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
+function CharacterHUD({ character: rawCharacter, onCharacterUpdate }: CharacterHUDProps) {
   const [activeTab, setActiveTab] = useState<TabType>('portrait');
+
+  // Migrate legacy single-class characters to multi-class format
+  const character = migrateToMultiClass(rawCharacter);
+  const totalLevel = getTotalLevel(character);
+  const classDisplay = getClassDisplayString(character);
 
   // Determine which resources go on hotbar (max <= 6 or explicitly set to 'hotbar')
   const shouldShowOnHotbar = (resource: Character['resources'][0]): boolean => {
@@ -236,10 +242,9 @@ function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent" />
         <div className="px-6 py-3 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-8">
-            <div className="text-dnd-accent font-medieval text-2xl">{character.name}</div>
-            <div className="text-gray-400 text-sm">
-              Level {character.level} {character.race} {character.className}
-              {character.subclassName && ` (${character.subclassName})`}
+            <div className="text-dnd-accent font-medieval text-2xl drop-shadow-lg">{character.name}</div>
+            <div className="text-gray-300 text-sm font-medieval">
+              {character.race} {classDisplay}
             </div>
           </div>
           <div className="flex items-center gap-4">

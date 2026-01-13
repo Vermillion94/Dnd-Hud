@@ -1,9 +1,13 @@
 {
   "id": "char-002",
   "name": "Elara Moonwhisper",
-  "className": "Wizard",
-  "subclassName": "School of Evocation",
-  "level": 5,
+  "classes": [
+    {
+      "className": "Wizard",
+      "subclassName": "School of Evocation",
+      "level": 5
+    }
+  ],
   "race": "High Elf",
   "background": "Sage",
   "alignment": "Neutral Good",

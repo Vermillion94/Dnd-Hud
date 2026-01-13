@@ -8,6 +8,9 @@
 
 import { AbilityScore } from './classDefinition';
 
+// Re-export for convenience
+export type { AbilityScore };
+
 export interface Character {
   // Basic info
   id: string;

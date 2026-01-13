@@ -57,14 +57,25 @@ npm run preview
 
 1. **Load a Character**
    - Click "Import Character" to load a character JSON file
-   - Or click "Load Example Character" to see a demo
+   - Or try an example:
+     - **⚔️ Fighter Example**: Aldric the Bold (Level 5 Battle Master) - Shows martial combat features
+     - **✨ Wizard Example**: Elara Moonwhisper (Level 5 Evocation Wizard) - Shows spellcasting system
 
 2. **Manage Your Character**
    - Update HP by clicking +/- or clicking the number to type
    - Use resources by clicking the slots or adjusting numbers
+   - Cast spells and manage spell slots (for spellcasters)
+   - Take short/long rests to restore resources
+   - Roll dice with the integrated dice roller
    - All changes auto-save to local storage
 
-3. **Export Your Character**
+3. **Level Up Your Character**
+   - The class definition is auto-loaded with example characters
+   - Click "Level Up" to open the wizard
+   - Make choices step-by-step (subclasses, fighting styles, etc.)
+   - See what features and resources you gain
+
+4. **Export Your Character**
    - Click "Export Character" to download a JSON file
    - Share this file with others or use it as a backup
 
@@ -123,7 +134,9 @@ Character files (e.g., `aldric.json`) contain a specific character's data - thei
 }
 ```
 
-See `/src/schemas/example-character.json` for a complete example.
+**Example Characters Available:**
+- `/src/schemas/example-character.json` - Aldric the Bold (Level 5 Battle Master Fighter)
+- `/src/schemas/example-wizard.json` - Elara Moonwhisper (Level 5 Evocation Wizard with spells)
 
 ### Class Definition Files
 
@@ -203,13 +216,15 @@ Class definition files (e.g., `Fighter.json`) contain ALL possible options for a
 }
 ```
 
-See `/src/schemas/Fighter.json` for a complete example.
+**Example Class Definitions Available:**
+- `/src/schemas/Fighter.json` - Complete Fighter (1-20) with Battle Master and Champion subclasses
+- `/src/schemas/Wizard.json` - Complete Wizard (1-20) with Evocation and Abjuration subclasses, full spellcasting
 
 ### Creating Your Own Class Definitions
 
 You can create JSON files for any class from any edition or homebrew system:
 
-1. Copy the structure from `Fighter.json`
+1. Copy the structure from `Fighter.json` or `Wizard.json`
 2. Fill in your class's features, choices, and progression
 3. Include ALL options at each level (subclasses, spells, fighting styles, etc.)
 4. Use icons (emojis work great!) for visual flair

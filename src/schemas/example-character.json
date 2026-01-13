@@ -1,0 +1,238 @@
+{
+  "id": "char-001",
+  "name": "Aldric the Bold",
+  "className": "Fighter",
+  "subclassName": "Battle Master",
+  "level": 5,
+  "race": "Human",
+  "background": "Soldier",
+  "alignment": "Lawful Good",
+  "abilityScores": {
+    "strength": 18,
+    "dexterity": 14,
+    "constitution": 16,
+    "intelligence": 10,
+    "wisdom": 12,
+    "charisma": 8
+  },
+  "armorClass": 18,
+  "proficiencyBonus": 3,
+  "speed": 30,
+  "initiative": 2,
+  "hitPoints": {
+    "current": 42,
+    "max": 47,
+    "temporary": 0
+  },
+  "resources": [
+    {
+      "name": "Second Wind",
+      "icon": "❤️‍🩹",
+      "current": 1,
+      "max": 1,
+      "rechargeOn": "short-rest",
+      "displayType": "slots"
+    },
+    {
+      "name": "Action Surge",
+      "icon": "⚡",
+      "current": 0,
+      "max": 1,
+      "rechargeOn": "short-rest",
+      "displayType": "slots"
+    },
+    {
+      "name": "Superiority Dice",
+      "icon": "🎲",
+      "current": 3,
+      "max": 4,
+      "rechargeOn": "short-rest",
+      "displayType": "slots"
+    }
+  ],
+  "features": [
+    {
+      "name": "Great Weapon Fighting",
+      "description": "When you roll a 1 or 2 on a damage die for an attack you make with a melee weapon that you are wielding with two hands, you can reroll the die and must use the new roll.",
+      "source": "Class: Fighter",
+      "type": "passive"
+    },
+    {
+      "name": "Second Wind",
+      "description": "You have a limited well of stamina that you can draw on to protect yourself from harm. On your turn, you can use a bonus action to regain hit points equal to 1d10 + your fighter level.",
+      "source": "Class: Fighter",
+      "type": "resource",
+      "usesResource": "Second Wind"
+    },
+    {
+      "name": "Action Surge",
+      "description": "You can push yourself beyond your normal limits for a moment. On your turn, you can take one additional action.",
+      "source": "Class: Fighter",
+      "type": "resource",
+      "usesResource": "Action Surge"
+    },
+    {
+      "name": "Combat Superiority",
+      "description": "You learn maneuvers that are fueled by special dice called superiority dice.",
+      "source": "Subclass: Battle Master",
+      "type": "resource",
+      "usesResource": "Superiority Dice"
+    },
+    {
+      "name": "Student of War",
+      "description": "You gain proficiency with one type of artisan's tools of your choice.",
+      "source": "Subclass: Battle Master",
+      "type": "passive"
+    },
+    {
+      "name": "Extra Attack",
+      "description": "You can attack twice, instead of once, whenever you take the Attack action on your turn.",
+      "source": "Class: Fighter",
+      "type": "passive"
+    }
+  ],
+  "inventory": {
+    "items": [
+      {
+        "id": "item-001",
+        "name": "Greatsword",
+        "description": "A massive two-handed sword",
+        "quantity": 1,
+        "weight": 6,
+        "value": 5000,
+        "category": "weapon",
+        "equipped": true
+      },
+      {
+        "id": "item-002",
+        "name": "Plate Armor",
+        "description": "Heavy metal armor providing superior protection",
+        "quantity": 1,
+        "weight": 65,
+        "value": 150000,
+        "category": "armor",
+        "equipped": true
+      },
+      {
+        "id": "item-003",
+        "name": "Healing Potion",
+        "description": "Restores 2d4+2 hit points when consumed",
+        "quantity": 3,
+        "weight": 0.5,
+        "value": 5000,
+        "category": "consumable"
+      },
+      {
+        "id": "item-004",
+        "name": "Rope (50 ft)",
+        "description": "Hemp rope",
+        "quantity": 1,
+        "weight": 10,
+        "value": 100,
+        "category": "misc"
+      }
+    ],
+    "equipment": {
+      "mainHand": {
+        "id": "item-001",
+        "name": "Greatsword",
+        "description": "A massive two-handed sword",
+        "quantity": 1,
+        "weight": 6,
+        "value": 5000,
+        "category": "weapon",
+        "equipped": true
+      },
+      "armor": {
+        "id": "item-002",
+        "name": "Plate Armor",
+        "description": "Heavy metal armor providing superior protection",
+        "quantity": 1,
+        "weight": 65,
+        "value": 150000,
+        "category": "armor",
+        "equipped": true
+      }
+    },
+    "currency": {
+      "copper": 50,
+      "silver": 20,
+      "electrum": 0,
+      "gold": 125,
+      "platinum": 2
+    }
+  },
+  "proficiencies": {
+    "armor": ["Light armor", "Medium armor", "Heavy armor", "Shields"],
+    "weapons": ["Simple weapons", "Martial weapons"],
+    "tools": ["Smith's tools"],
+    "languages": ["Common", "Dwarvish"],
+    "skills": [
+      {
+        "skill": "Athletics",
+        "proficient": true
+      },
+      {
+        "skill": "Intimidation",
+        "proficient": true
+      },
+      {
+        "skill": "Perception",
+        "proficient": false
+      }
+    ],
+    "savingThrows": ["strength", "constitution"]
+  },
+  "levelHistory": [
+    {
+      "level": 1,
+      "hitPointsGained": 10,
+      "choicesMade": [
+        {
+          "type": "fighting-style",
+          "selections": ["Great Weapon Fighting"]
+        }
+      ],
+      "featuresGained": ["Fighting Style", "Second Wind"],
+      "resourcesGained": ["Second Wind"]
+    },
+    {
+      "level": 2,
+      "hitPointsGained": 7,
+      "choicesMade": [],
+      "featuresGained": ["Action Surge"],
+      "resourcesGained": ["Action Surge"]
+    },
+    {
+      "level": 3,
+      "hitPointsGained": 6,
+      "choicesMade": [
+        {
+          "type": "subclass",
+          "selections": ["Battle Master"]
+        }
+      ],
+      "featuresGained": ["Combat Superiority", "Student of War"],
+      "resourcesGained": ["Superiority Dice"]
+    },
+    {
+      "level": 4,
+      "hitPointsGained": 8,
+      "choicesMade": [
+        {
+          "type": "ability-score-improvement",
+          "selections": ["Strength +2"]
+        }
+      ],
+      "featuresGained": [],
+      "resourcesGained": []
+    },
+    {
+      "level": 5,
+      "hitPointsGained": 6,
+      "choicesMade": [],
+      "featuresGained": ["Extra Attack"],
+      "resourcesGained": []
+    }
+  ]
+}

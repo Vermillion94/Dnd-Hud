@@ -1,0 +1,409 @@
+{
+  "name": "Fighter",
+  "description": "A master of martial combat, skilled with a variety of weapons and armor.",
+  "hitDie": 10,
+  "primaryAbility": ["strength", "dexterity"],
+  "savingThrows": ["strength", "constitution"],
+  "startingProficiencies": {
+    "armor": ["Light armor", "Medium armor", "Heavy armor", "Shields"],
+    "weapons": ["Simple weapons", "Martial weapons"],
+    "tools": [],
+    "skills": {
+      "choose": 2,
+      "from": [
+        "Acrobatics",
+        "Animal Handling",
+        "Athletics",
+        "History",
+        "Insight",
+        "Intimidation",
+        "Perception",
+        "Survival"
+      ]
+    }
+  },
+  "startingEquipment": {
+    "description": "You start with the following equipment, in addition to the equipment granted by your background:",
+    "choices": [
+      {
+        "choose": 1,
+        "from": ["Chain mail", "Leather armor, longbow, and 20 arrows"]
+      },
+      {
+        "choose": 1,
+        "from": [
+          "A martial weapon and a shield",
+          "Two martial weapons"
+        ]
+      },
+      {
+        "choose": 1,
+        "from": ["A light crossbow and 20 bolts", "Two handaxes"]
+      },
+      {
+        "choose": 1,
+        "from": ["A dungeoneer's pack", "An explorer's pack"]
+      }
+    ]
+  },
+  "levels": [
+    {
+      "level": 1,
+      "proficiencyBonus": 2,
+      "features": [
+        {
+          "name": "Fighting Style",
+          "description": "You adopt a particular style of fighting as your specialty.",
+          "type": "passive"
+        },
+        {
+          "name": "Second Wind",
+          "description": "You have a limited well of stamina that you can draw on to protect yourself from harm. On your turn, you can use a bonus action to regain hit points equal to 1d10 + your fighter level.",
+          "type": "resource",
+          "grantsResource": {
+            "name": "Second Wind",
+            "icon": "❤️‍🩹",
+            "max": 1,
+            "rechargeOn": "short-rest"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "type": "fighting-style",
+          "prompt": "Choose your Fighting Style",
+          "choose": 1,
+          "from": [
+            {
+              "name": "Archery",
+              "description": "You gain a +2 bonus to attack rolls you make with ranged weapons."
+            },
+            {
+              "name": "Defense",
+              "description": "While you are wearing armor, you gain a +1 bonus to AC."
+            },
+            {
+              "name": "Dueling",
+              "description": "When you are wielding a melee weapon in one hand and no other weapons, you gain a +2 bonus to damage rolls with that weapon."
+            },
+            {
+              "name": "Great Weapon Fighting",
+              "description": "When you roll a 1 or 2 on a damage die for an attack you make with a melee weapon that you are wielding with two hands, you can reroll the die and must use the new roll."
+            },
+            {
+              "name": "Protection",
+              "description": "When a creature you can see attacks a target other than you that is within 5 feet of you, you can use your reaction to impose disadvantage on the attack roll. You must be wielding a shield."
+            },
+            {
+              "name": "Two-Weapon Fighting",
+              "description": "When you engage in two-weapon fighting, you can add your ability modifier to the damage of the second attack."
+            }
+          ]
+        }
+      ],
+      "resources": [
+        {
+          "name": "Second Wind",
+          "icon": "❤️‍🩹",
+          "max": 1,
+          "rechargeOn": "short-rest",
+          "displayType": "slots"
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "proficiencyBonus": 2,
+      "features": [
+        {
+          "name": "Action Surge",
+          "description": "You can push yourself beyond your normal limits for a moment. On your turn, you can take one additional action. Once you use this feature, you must finish a short or long rest before you can use it again.",
+          "type": "resource",
+          "grantsResource": {
+            "name": "Action Surge",
+            "icon": "⚡",
+            "max": 1,
+            "rechargeOn": "short-rest"
+          }
+        }
+      ],
+      "resources": [
+        {
+          "name": "Action Surge",
+          "icon": "⚡",
+          "max": 1,
+          "rechargeOn": "short-rest",
+          "displayType": "slots"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "proficiencyBonus": 2,
+      "features": [
+        {
+          "name": "Martial Archetype",
+          "description": "You choose an archetype that you strive to emulate in your combat styles and techniques.",
+          "type": "passive"
+        }
+      ],
+      "choices": [
+        {
+          "type": "subclass",
+          "prompt": "Choose your Martial Archetype",
+          "choose": 1,
+          "from": [
+            {
+              "name": "Battle Master",
+              "description": "Those who emulate the archetypal Battle Master employ martial techniques passed down through generations. To a Battle Master, combat is an academic field, sometimes including subjects beyond battle such as weaponsmithing and calligraphy.",
+              "grants": {
+                "features": [
+                  {
+                    "name": "Combat Superiority",
+                    "description": "You learn maneuvers that are fueled by special dice called superiority dice.",
+                    "type": "resource",
+                    "grantsResource": {
+                      "name": "Superiority Dice",
+                      "icon": "🎲",
+                      "max": 4,
+                      "rechargeOn": "short-rest"
+                    }
+                  },
+                  {
+                    "name": "Student of War",
+                    "description": "You gain proficiency with one type of artisan's tools of your choice.",
+                    "type": "passive"
+                  }
+                ],
+                "resources": [
+                  {
+                    "name": "Superiority Dice",
+                    "icon": "🎲",
+                    "max": 4,
+                    "rechargeOn": "short-rest",
+                    "displayType": "slots"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Champion",
+              "description": "The archetypal Champion focuses on the development of raw physical power honed to deadly perfection. Those who model themselves on this archetype combine rigorous training with physical excellence to deal devastating blows.",
+              "grants": {
+                "features": [
+                  {
+                    "name": "Improved Critical",
+                    "description": "Your weapon attacks score a critical hit on a roll of 19 or 20.",
+                    "type": "passive"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Eldritch Knight",
+              "description": "The archetypal Eldritch Knight combines the martial mastery common to all fighters with a careful study of magic. Eldritch Knights use magical techniques similar to those practiced by wizards.",
+              "grants": {
+                "features": [
+                  {
+                    "name": "Spellcasting",
+                    "description": "You learn to cast spells.",
+                    "type": "passive"
+                  },
+                  {
+                    "name": "Weapon Bond",
+                    "description": "You learn a ritual that creates a magical bond between yourself and one weapon.",
+                    "type": "passive"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "proficiencyBonus": 2,
+      "features": [],
+      "abilityScoreImprovement": true
+    },
+    {
+      "level": 5,
+      "proficiencyBonus": 3,
+      "features": [
+        {
+          "name": "Extra Attack",
+          "description": "You can attack twice, instead of once, whenever you take the Attack action on your turn.",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "proficiencyBonus": 3,
+      "features": [],
+      "abilityScoreImprovement": true
+    },
+    {
+      "level": 7,
+      "proficiencyBonus": 3,
+      "features": [
+        {
+          "name": "Martial Archetype Feature",
+          "description": "You gain a feature from your Martial Archetype.",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "level": 8,
+      "proficiencyBonus": 3,
+      "features": [],
+      "abilityScoreImprovement": true
+    },
+    {
+      "level": 9,
+      "proficiencyBonus": 4,
+      "features": [
+        {
+          "name": "Indomitable",
+          "description": "You can reroll a saving throw that you fail. If you do so, you must use the new roll. You can use this feature once before a long rest.",
+          "type": "resource",
+          "grantsResource": {
+            "name": "Indomitable",
+            "icon": "🛡️",
+            "max": 1,
+            "rechargeOn": "long-rest"
+          }
+        }
+      ],
+      "resources": [
+        {
+          "name": "Indomitable",
+          "icon": "🛡️",
+          "max": 1,
+          "rechargeOn": "long-rest",
+          "displayType": "slots"
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "proficiencyBonus": 4,
+      "features": [
+        {
+          "name": "Martial Archetype Feature",
+          "description": "You gain a feature from your Martial Archetype.",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "level": 11,
+      "proficiencyBonus": 4,
+      "features": [
+        {
+          "name": "Extra Attack (2)",
+          "description": "You can attack three times whenever you take the Attack action on your turn.",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "level": 12,
+      "proficiencyBonus": 4,
+      "features": [],
+      "abilityScoreImprovement": true
+    },
+    {
+      "level": 13,
+      "proficiencyBonus": 5,
+      "features": [
+        {
+          "name": "Indomitable (2 uses)",
+          "description": "You can use Indomitable twice before a long rest.",
+          "type": "resource",
+          "modifiesResource": {
+            "name": "Indomitable",
+            "change": "=2"
+          }
+        }
+      ]
+    },
+    {
+      "level": 14,
+      "proficiencyBonus": 5,
+      "features": [],
+      "abilityScoreImprovement": true
+    },
+    {
+      "level": 15,
+      "proficiencyBonus": 5,
+      "features": [
+        {
+          "name": "Martial Archetype Feature",
+          "description": "You gain a feature from your Martial Archetype.",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "level": 16,
+      "proficiencyBonus": 5,
+      "features": [],
+      "abilityScoreImprovement": true
+    },
+    {
+      "level": 17,
+      "proficiencyBonus": 6,
+      "features": [
+        {
+          "name": "Action Surge (2 uses)",
+          "description": "You can use Action Surge twice before a rest.",
+          "type": "resource",
+          "modifiesResource": {
+            "name": "Action Surge",
+            "change": "=2"
+          }
+        },
+        {
+          "name": "Indomitable (3 uses)",
+          "description": "You can use Indomitable three times before a long rest.",
+          "type": "resource",
+          "modifiesResource": {
+            "name": "Indomitable",
+            "change": "=3"
+          }
+        }
+      ]
+    },
+    {
+      "level": 18,
+      "proficiencyBonus": 6,
+      "features": [
+        {
+          "name": "Martial Archetype Feature",
+          "description": "You gain a feature from your Martial Archetype.",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "level": 19,
+      "proficiencyBonus": 6,
+      "features": [],
+      "abilityScoreImprovement": true
+    },
+    {
+      "level": 20,
+      "proficiencyBonus": 6,
+      "features": [
+        {
+          "name": "Extra Attack (3)",
+          "description": "You can attack four times whenever you take the Attack action on your turn.",
+          "type": "passive"
+        }
+      ]
+    }
+  ]
+}

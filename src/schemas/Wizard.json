@@ -1,0 +1,392 @@
+{
+  "name": "Wizard",
+  "description": "A scholarly magic-user capable of manipulating the structures of reality through learned spells.",
+  "hitDie": 6,
+  "primaryAbility": ["intelligence"],
+  "savingThrows": ["intelligence", "wisdom"],
+  "startingProficiencies": {
+    "armor": [],
+    "weapons": ["Daggers", "Darts", "Slings", "Quarterstaffs", "Light crossbows"],
+    "tools": [],
+    "skills": {
+      "choose": 2,
+      "from": [
+        "Arcana",
+        "History",
+        "Insight",
+        "Investigation",
+        "Medicine",
+        "Religion"
+      ]
+    }
+  },
+  "spellcasting": {
+    "ability": "intelligence",
+    "spellsKnown": "spellbook",
+    "cantripsKnown": [3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+    "spellSlots": [
+      [2, 0, 0, 0, 0, 0, 0, 0, 0],
+      [3, 0, 0, 0, 0, 0, 0, 0, 0],
+      [4, 2, 0, 0, 0, 0, 0, 0, 0],
+      [4, 3, 0, 0, 0, 0, 0, 0, 0],
+      [4, 3, 2, 0, 0, 0, 0, 0, 0],
+      [4, 3, 3, 0, 0, 0, 0, 0, 0],
+      [4, 3, 3, 1, 0, 0, 0, 0, 0],
+      [4, 3, 3, 2, 0, 0, 0, 0, 0],
+      [4, 3, 3, 3, 1, 0, 0, 0, 0],
+      [4, 3, 3, 3, 2, 0, 0, 0, 0],
+      [4, 3, 3, 3, 2, 1, 0, 0, 0],
+      [4, 3, 3, 3, 2, 1, 0, 0, 0],
+      [4, 3, 3, 3, 2, 1, 1, 0, 0],
+      [4, 3, 3, 3, 2, 1, 1, 0, 0],
+      [4, 3, 3, 3, 2, 1, 1, 1, 0],
+      [4, 3, 3, 3, 2, 1, 1, 1, 0],
+      [4, 3, 3, 3, 2, 1, 1, 1, 1],
+      [4, 3, 3, 3, 3, 1, 1, 1, 1],
+      [4, 3, 3, 3, 3, 2, 1, 1, 1],
+      [4, 3, 3, 3, 3, 2, 2, 1, 1]
+    ]
+  },
+  "levels": [
+    {
+      "level": 1,
+      "proficiencyBonus": 2,
+      "features": [
+        {
+          "name": "Spellcasting",
+          "description": "As a student of arcane magic, you have a spellbook containing spells that show the first glimmerings of your true power.",
+          "type": "passive"
+        },
+        {
+          "name": "Arcane Recovery",
+          "description": "You can regain some of your magical energy by studying your spellbook. Once per day when you finish a short rest, you can choose expended spell slots to recover. The spell slots can have a combined level that is equal to or less than half your wizard level (rounded up), and none of the slots can be 6th level or higher.",
+          "type": "resource",
+          "grantsResource": {
+            "name": "Arcane Recovery",
+            "icon": "📖",
+            "max": 1,
+            "rechargeOn": "long-rest"
+          }
+        }
+      ],
+      "resources": [
+        {
+          "name": "Arcane Recovery",
+          "icon": "📖",
+          "max": 1,
+          "rechargeOn": "long-rest",
+          "displayType": "slots"
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "proficiencyBonus": 2,
+      "features": [
+        {
+          "name": "Arcane Tradition",
+          "description": "You choose an arcane tradition, shaping your practice of magic through one of eight schools.",
+          "type": "passive"
+        }
+      ],
+      "choices": [
+        {
+          "type": "subclass",
+          "prompt": "Choose your Arcane Tradition",
+          "choose": 1,
+          "from": [
+            {
+              "name": "School of Evocation",
+              "description": "You focus your study on magic that creates powerful elemental effects such as bitter cold, searing flame, rolling thunder, crackling lightning, and burning acid.",
+              "grants": {
+                "features": [
+                  {
+                    "name": "Evocation Savant",
+                    "description": "The gold and time you must spend to copy an evocation spell into your spellbook is halved.",
+                    "type": "passive"
+                  },
+                  {
+                    "name": "Sculpt Spells",
+                    "description": "When you cast an evocation spell that affects other creatures that you can see, you can choose a number of them equal to 1 + the spell's level. The chosen creatures automatically succeed on their saving throws against the spell, and they take no damage if they would normally take half damage on a successful save.",
+                    "type": "passive"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "School of Abjuration",
+              "description": "You focus your study on magic that blocks, banishes, and protects. Detractors of this school say that its tradition is about denial, negation rather than positive assertion.",
+              "grants": {
+                "features": [
+                  {
+                    "name": "Abjuration Savant",
+                    "description": "The gold and time you must spend to copy an abjuration spell into your spellbook is halved.",
+                    "type": "passive"
+                  },
+                  {
+                    "name": "Arcane Ward",
+                    "description": "When you cast an abjuration spell of 1st level or higher, you can simultaneously use a strand of the spell's magic to create a magical ward on yourself that lasts until you finish a long rest. The ward has hit points equal to twice your wizard level + your Intelligence modifier. Whenever you take damage, the ward takes the damage instead. If this damage reduces the ward to 0 hit points, you take any remaining damage. While the ward has 0 hit points, it can't absorb damage, but its magic remains. Whenever you cast an abjuration spell of 1st level or higher, the ward regains a number of hit points equal to twice the level of the spell.",
+                    "type": "passive"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "proficiencyBonus": 2,
+      "features": [],
+      "spellLevelUnlocked": 2
+    },
+    {
+      "level": 4,
+      "proficiencyBonus": 2,
+      "features": [],
+      "abilityScoreImprovement": true
+    },
+    {
+      "level": 5,
+      "proficiencyBonus": 3,
+      "features": [],
+      "spellLevelUnlocked": 3
+    },
+    {
+      "level": 6,
+      "proficiencyBonus": 3,
+      "features": [
+        {
+          "name": "Arcane Tradition Feature",
+          "description": "You gain a feature from your Arcane Tradition.",
+          "type": "passive"
+        }
+      ],
+      "subclassFeatures": {
+        "School of Evocation": [
+          {
+            "name": "Potent Cantrip",
+            "description": "Your damaging cantrips affect even creatures that avoid the brunt of the effect. When a creature succeeds on a saving throw against your cantrip, the creature takes half the cantrip's damage (if any) but suffers no additional effect from the cantrip.",
+            "type": "passive"
+          }
+        ],
+        "School of Abjuration": [
+          {
+            "name": "Projected Ward",
+            "description": "When a creature that you can see within 30 feet of you takes damage, you can use your reaction to cause your Arcane Ward to absorb that damage. If this damage reduces the ward to 0 hit points, the warded creature takes any remaining damage.",
+            "type": "active"
+          }
+        ]
+      }
+    },
+    {
+      "level": 7,
+      "proficiencyBonus": 3,
+      "features": [],
+      "spellLevelUnlocked": 4
+    },
+    {
+      "level": 8,
+      "proficiencyBonus": 3,
+      "features": [],
+      "abilityScoreImprovement": true
+    },
+    {
+      "level": 9,
+      "proficiencyBonus": 4,
+      "features": [],
+      "spellLevelUnlocked": 5
+    },
+    {
+      "level": 10,
+      "proficiencyBonus": 4,
+      "features": [
+        {
+          "name": "Arcane Tradition Feature",
+          "description": "You gain a feature from your Arcane Tradition.",
+          "type": "passive"
+        }
+      ],
+      "subclassFeatures": {
+        "School of Evocation": [
+          {
+            "name": "Empowered Evocation",
+            "description": "You can add your Intelligence modifier to the damage roll of any wizard evocation spell you cast.",
+            "type": "passive"
+          }
+        ],
+        "School of Abjuration": [
+          {
+            "name": "Improved Abjuration",
+            "description": "When you cast an abjuration spell that requires you to make an ability check as a part of casting that spell (as in counterspell and dispel magic), you add your proficiency bonus to that ability check.",
+            "type": "passive"
+          }
+        ]
+      }
+    },
+    {
+      "level": 11,
+      "proficiencyBonus": 4,
+      "features": [],
+      "spellLevelUnlocked": 6
+    },
+    {
+      "level": 12,
+      "proficiencyBonus": 4,
+      "features": [],
+      "abilityScoreImprovement": true
+    },
+    {
+      "level": 13,
+      "proficiencyBonus": 5,
+      "features": [],
+      "spellLevelUnlocked": 7
+    },
+    {
+      "level": 14,
+      "proficiencyBonus": 5,
+      "features": [
+        {
+          "name": "Arcane Tradition Feature",
+          "description": "You gain a feature from your Arcane Tradition.",
+          "type": "passive"
+        }
+      ],
+      "subclassFeatures": {
+        "School of Evocation": [
+          {
+            "name": "Overchannel",
+            "description": "When you cast a wizard spell of 5th level or lower that deals damage, you can deal maximum damage with that spell. The first time you do so, you suffer no adverse effect. If you use this feature again before you finish a long rest, you take 2d12 necrotic damage for each level of the spell, immediately after you cast it. Each time you use this feature again before finishing a long rest, the necrotic damage per spell level increases by 1d12.",
+            "type": "resource",
+            "grantsResource": {
+              "name": "Overchannel",
+              "icon": "⚡",
+              "max": 1,
+              "rechargeOn": "long-rest"
+            }
+          }
+        ],
+        "School of Abjuration": [
+          {
+            "name": "Spell Resistance",
+            "description": "You have advantage on saving throws against spells, and you have resistance against the damage of spells.",
+            "type": "passive"
+          }
+        ]
+      },
+      "resources": [
+        {
+          "name": "Overchannel",
+          "icon": "⚡",
+          "max": 1,
+          "rechargeOn": "long-rest",
+          "displayType": "slots",
+          "conditional": "School of Evocation"
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "proficiencyBonus": 5,
+      "features": [],
+      "spellLevelUnlocked": 8
+    },
+    {
+      "level": 16,
+      "proficiencyBonus": 5,
+      "features": [],
+      "abilityScoreImprovement": true
+    },
+    {
+      "level": 17,
+      "proficiencyBonus": 6,
+      "features": [],
+      "spellLevelUnlocked": 9
+    },
+    {
+      "level": 18,
+      "proficiencyBonus": 6,
+      "features": [
+        {
+          "name": "Spell Mastery",
+          "description": "You have achieved such mastery over certain spells that you can cast them at will. Choose a 1st-level wizard spell and a 2nd-level wizard spell that are in your spellbook. You can cast those spells at their lowest level without expending a spell slot when you have them prepared.",
+          "type": "passive"
+        }
+      ],
+      "choices": [
+        {
+          "type": "spell-mastery",
+          "prompt": "Choose spells for Spell Mastery",
+          "choose": 2,
+          "from": [
+            {
+              "name": "1st-level spell from your spellbook",
+              "description": "Choose any 1st-level wizard spell in your spellbook"
+            },
+            {
+              "name": "2nd-level spell from your spellbook",
+              "description": "Choose any 2nd-level wizard spell in your spellbook"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 19,
+      "proficiencyBonus": 6,
+      "features": [],
+      "abilityScoreImprovement": true
+    },
+    {
+      "level": 20,
+      "proficiencyBonus": 6,
+      "features": [
+        {
+          "name": "Signature Spells",
+          "description": "You gain mastery over two powerful spells and can cast them with little effort. Choose two 3rd-level wizard spells in your spellbook as your signature spells. You always have these spells prepared, they don't count against the number of spells you have prepared, and you can cast each of them once at 3rd level without expending a spell slot. When you do so, you can't do so again until you finish a short or long rest.",
+          "type": "resource",
+          "grantsResource": {
+            "name": "Signature Spell 1",
+            "icon": "📜",
+            "max": 1,
+            "rechargeOn": "short-rest"
+          }
+        }
+      ],
+      "resources": [
+        {
+          "name": "Signature Spell 1",
+          "icon": "📜",
+          "max": 1,
+          "rechargeOn": "short-rest",
+          "displayType": "slots"
+        },
+        {
+          "name": "Signature Spell 2",
+          "icon": "📜",
+          "max": 1,
+          "rechargeOn": "short-rest",
+          "displayType": "slots"
+        }
+      ],
+      "choices": [
+        {
+          "type": "signature-spells",
+          "prompt": "Choose your Signature Spells",
+          "choose": 2,
+          "from": [
+            {
+              "name": "3rd-level spell from your spellbook (1)",
+              "description": "Choose any 3rd-level wizard spell in your spellbook"
+            },
+            {
+              "name": "3rd-level spell from your spellbook (2)",
+              "description": "Choose a second 3rd-level wizard spell in your spellbook"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

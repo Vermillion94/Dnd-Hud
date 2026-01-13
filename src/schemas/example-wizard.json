@@ -1,0 +1,414 @@
+{
+  "id": "char-002",
+  "name": "Elara Moonwhisper",
+  "className": "Wizard",
+  "subclassName": "School of Evocation",
+  "level": 5,
+  "race": "High Elf",
+  "background": "Sage",
+  "alignment": "Neutral Good",
+  "abilityScores": {
+    "strength": 8,
+    "dexterity": 14,
+    "constitution": 13,
+    "intelligence": 18,
+    "wisdom": 12,
+    "charisma": 10
+  },
+  "armorClass": 12,
+  "proficiencyBonus": 3,
+  "speed": 30,
+  "initiative": 2,
+  "hitPoints": {
+    "current": 24,
+    "max": 24,
+    "temporary": 0
+  },
+  "resources": [
+    {
+      "name": "Arcane Recovery",
+      "icon": "📖",
+      "current": 1,
+      "max": 1,
+      "rechargeOn": "long-rest",
+      "displayType": "slots"
+    }
+  ],
+  "features": [
+    {
+      "name": "Spellcasting",
+      "description": "As a student of arcane magic, you have a spellbook containing spells that show the first glimmerings of your true power.",
+      "source": "Class: Wizard",
+      "type": "passive"
+    },
+    {
+      "name": "Arcane Recovery",
+      "description": "Once per day when you finish a short rest, you can recover spell slots with a combined level equal to or less than half your wizard level (rounded up).",
+      "source": "Class: Wizard",
+      "type": "resource",
+      "usesResource": "Arcane Recovery"
+    },
+    {
+      "name": "Evocation Savant",
+      "description": "The gold and time you must spend to copy an evocation spell into your spellbook is halved.",
+      "source": "Subclass: School of Evocation",
+      "type": "passive"
+    },
+    {
+      "name": "Sculpt Spells",
+      "description": "When you cast an evocation spell that affects other creatures, you can choose a number of them equal to 1 + the spell's level. They automatically succeed on their saving throws and take no damage if they would normally take half.",
+      "source": "Subclass: School of Evocation",
+      "type": "passive"
+    }
+  ],
+  "inventory": {
+    "items": [
+      {
+        "id": "item-w001",
+        "name": "Spellbook",
+        "description": "A leather-bound book containing your known spells",
+        "quantity": 1,
+        "weight": 3,
+        "value": 5000,
+        "category": "tool",
+        "equipped": false
+      },
+      {
+        "id": "item-w002",
+        "name": "Quarterstaff",
+        "description": "A simple wooden staff",
+        "quantity": 1,
+        "weight": 4,
+        "value": 20,
+        "category": "weapon",
+        "equipped": true
+      },
+      {
+        "id": "item-w003",
+        "name": "Component Pouch",
+        "description": "A pouch containing material components for spellcasting",
+        "quantity": 1,
+        "weight": 2,
+        "value": 2500,
+        "category": "tool",
+        "equipped": true
+      },
+      {
+        "id": "item-w004",
+        "name": "Scholar's Pack",
+        "description": "Includes a backpack, book, ink, quill, parchment, and more",
+        "quantity": 1,
+        "weight": 10,
+        "value": 4000,
+        "category": "misc",
+        "equipped": false
+      },
+      {
+        "id": "item-w005",
+        "name": "Scroll of Identify",
+        "description": "A magical scroll containing the Identify spell",
+        "quantity": 2,
+        "weight": 0.1,
+        "value": 5000,
+        "category": "consumable",
+        "magical": true,
+        "rarity": "common"
+      }
+    ],
+    "equipment": {
+      "mainHand": {
+        "id": "item-w002",
+        "name": "Quarterstaff",
+        "description": "A simple wooden staff",
+        "quantity": 1,
+        "weight": 4,
+        "value": 20,
+        "category": "weapon",
+        "equipped": true
+      }
+    },
+    "currency": {
+      "copper": 30,
+      "silver": 15,
+      "electrum": 5,
+      "gold": 85,
+      "platinum": 0
+    }
+  },
+  "spellcasting": {
+    "ability": "intelligence",
+    "spellSaveDC": 15,
+    "spellAttackBonus": 7,
+    "knownSpells": [
+      {
+        "name": "Fire Bolt",
+        "level": 0,
+        "school": "Evocation",
+        "castingTime": "1 action",
+        "range": "120 feet",
+        "components": "V, S",
+        "duration": "Instantaneous",
+        "description": "You hurl a mote of fire at a creature or object within range. Make a ranged spell attack. On a hit, the target takes 1d10 fire damage. A flammable object hit by this spell ignites if it isn't being worn or carried. The spell's damage increases by 1d10 when you reach 5th level (2d10).",
+        "prepared": true
+      },
+      {
+        "name": "Mage Hand",
+        "level": 0,
+        "school": "Conjuration",
+        "castingTime": "1 action",
+        "range": "30 feet",
+        "components": "V, S",
+        "duration": "1 minute",
+        "description": "A spectral, floating hand appears at a point you choose within range. The hand lasts for the duration or until you dismiss it as an action. You can use your action to control the hand and can use it to manipulate objects, open unlocked doors, retrieve objects, or pour liquids.",
+        "prepared": true
+      },
+      {
+        "name": "Prestidigitation",
+        "level": 0,
+        "school": "Transmutation",
+        "castingTime": "1 action",
+        "range": "10 feet",
+        "components": "V, S",
+        "duration": "Up to 1 hour",
+        "description": "This spell is a minor magical trick. You create an instantaneous, harmless sensory effect, light or snuff out a small flame, clean or soil an object, chill or warm material, make a mark, or create a small illusion.",
+        "prepared": true
+      },
+      {
+        "name": "Ray of Frost",
+        "level": 0,
+        "school": "Evocation",
+        "castingTime": "1 action",
+        "range": "60 feet",
+        "components": "V, S",
+        "duration": "Instantaneous",
+        "description": "A frigid beam of blue-white light streaks toward a creature within range. Make a ranged spell attack. On a hit, it takes 1d8 cold damage, and its speed is reduced by 10 feet until the start of your next turn.",
+        "prepared": true
+      },
+      {
+        "name": "Magic Missile",
+        "level": 1,
+        "school": "Evocation",
+        "castingTime": "1 action",
+        "range": "120 feet",
+        "components": "V, S",
+        "duration": "Instantaneous",
+        "description": "You create three glowing darts of magical force. Each dart hits a creature of your choice that you can see within range. A dart deals 1d4 + 1 force damage to its target. The darts all strike simultaneously.",
+        "prepared": true
+      },
+      {
+        "name": "Shield",
+        "level": 1,
+        "school": "Abjuration",
+        "castingTime": "1 reaction",
+        "range": "Self",
+        "components": "V, S",
+        "duration": "1 round",
+        "description": "An invisible barrier of magical force appears and protects you. Until the start of your next turn, you have a +5 bonus to AC, including against the triggering attack, and you take no damage from magic missile.",
+        "prepared": true
+      },
+      {
+        "name": "Detect Magic",
+        "level": 1,
+        "school": "Divination",
+        "castingTime": "1 action",
+        "range": "Self",
+        "components": "V, S",
+        "duration": "Concentration, up to 10 minutes",
+        "description": "For the duration, you sense the presence of magic within 30 feet of you. If you sense magic in this way, you can use your action to see a faint aura around any visible creature or object in the area that bears magic.",
+        "concentration": true,
+        "ritual": true,
+        "prepared": true
+      },
+      {
+        "name": "Mage Armor",
+        "level": 1,
+        "school": "Abjuration",
+        "castingTime": "1 action",
+        "range": "Touch",
+        "components": "V, S, M",
+        "duration": "8 hours",
+        "description": "You touch a willing creature who isn't wearing armor, and a protective magical force surrounds it until the spell ends. The target's base AC becomes 13 + its Dexterity modifier.",
+        "prepared": true
+      },
+      {
+        "name": "Burning Hands",
+        "level": 1,
+        "school": "Evocation",
+        "castingTime": "1 action",
+        "range": "Self (15-foot cone)",
+        "components": "V, S",
+        "duration": "Instantaneous",
+        "description": "As you hold your hands with thumbs touching and fingers spread, a thin sheet of flames shoots forth from your outstretched fingertips. Each creature in a 15-foot cone must make a Dexterity saving throw. A creature takes 3d6 fire damage on a failed save, or half as much on a successful one.",
+        "prepared": true
+      },
+      {
+        "name": "Identify",
+        "level": 1,
+        "school": "Divination",
+        "castingTime": "1 minute",
+        "range": "Touch",
+        "components": "V, S, M",
+        "duration": "Instantaneous",
+        "description": "You choose one object that you must touch throughout the casting of the spell. If it is a magic item or some other magic-imbued object, you learn its properties and how to use them.",
+        "ritual": true,
+        "prepared": false
+      },
+      {
+        "name": "Misty Step",
+        "level": 2,
+        "school": "Conjuration",
+        "castingTime": "1 bonus action",
+        "range": "Self",
+        "components": "V",
+        "duration": "Instantaneous",
+        "description": "Briefly surrounded by silvery mist, you teleport up to 30 feet to an unoccupied space that you can see.",
+        "prepared": true
+      },
+      {
+        "name": "Scorching Ray",
+        "level": 2,
+        "school": "Evocation",
+        "castingTime": "1 action",
+        "range": "120 feet",
+        "components": "V, S",
+        "duration": "Instantaneous",
+        "description": "You create three rays of fire and hurl them at targets within range. You can hurl them at one target or several. Make a ranged spell attack for each ray. On a hit, the target takes 2d6 fire damage.",
+        "prepared": true
+      },
+      {
+        "name": "Mirror Image",
+        "level": 2,
+        "school": "Illusion",
+        "castingTime": "1 action",
+        "range": "Self",
+        "components": "V, S",
+        "duration": "1 minute",
+        "description": "Three illusory duplicates of yourself appear in your space. Until the spell ends, the duplicates move with you and mimic your actions. Each time a creature targets you with an attack, roll a d20 to determine whether the attack targets you or one of your duplicates.",
+        "prepared": true
+      },
+      {
+        "name": "Fireball",
+        "level": 3,
+        "school": "Evocation",
+        "castingTime": "1 action",
+        "range": "150 feet",
+        "components": "V, S, M",
+        "duration": "Instantaneous",
+        "description": "A bright streak flashes from your pointing finger to a point you choose within range then blossoms with a low roar into an explosion of flame. Each creature in a 20-foot radius sphere centered on that point must make a Dexterity saving throw. A target takes 8d6 fire damage on a failed save, or half as much on a successful one.",
+        "prepared": true
+      },
+      {
+        "name": "Counterspell",
+        "level": 3,
+        "school": "Abjuration",
+        "castingTime": "1 reaction",
+        "range": "60 feet",
+        "components": "S",
+        "duration": "Instantaneous",
+        "description": "You attempt to interrupt a creature in the process of casting a spell. If the creature is casting a spell of 3rd level or lower, its spell fails and has no effect. If it is casting a spell of 4th level or higher, make an ability check using your spellcasting ability. The DC equals 10 + the spell's level. On a success, the creature's spell fails.",
+        "prepared": true
+      },
+      {
+        "name": "Lightning Bolt",
+        "level": 3,
+        "school": "Evocation",
+        "castingTime": "1 action",
+        "range": "Self (100-foot line)",
+        "components": "V, S, M",
+        "duration": "Instantaneous",
+        "description": "A stroke of lightning forming a line 100 feet long and 5 feet wide blasts out from you in a direction you choose. Each creature in the line must make a Dexterity saving throw. A creature takes 8d6 lightning damage on a failed save, or half as much on a successful one.",
+        "prepared": true
+      }
+    ],
+    "spellSlots": [
+      {
+        "level": 1,
+        "max": 4,
+        "used": 1
+      },
+      {
+        "level": 2,
+        "max": 3,
+        "used": 0
+      },
+      {
+        "level": 3,
+        "max": 2,
+        "used": 1
+      }
+    ]
+  },
+  "proficiencies": {
+    "armor": [],
+    "weapons": ["Daggers", "Darts", "Slings", "Quarterstaffs", "Light crossbows"],
+    "tools": [],
+    "languages": ["Common", "Elvish", "Draconic", "Celestial"],
+    "skills": [
+      {
+        "skill": "Arcana",
+        "proficient": true,
+        "expertise": true
+      },
+      {
+        "skill": "History",
+        "proficient": true
+      },
+      {
+        "skill": "Investigation",
+        "proficient": true
+      },
+      {
+        "skill": "Perception",
+        "proficient": true
+      }
+    ],
+    "savingThrows": ["intelligence", "wisdom"]
+  },
+  "levelHistory": [
+    {
+      "level": 1,
+      "hitPointsGained": 6,
+      "choicesMade": [],
+      "featuresGained": ["Spellcasting", "Arcane Recovery"],
+      "resourcesGained": ["Arcane Recovery"]
+    },
+    {
+      "level": 2,
+      "hitPointsGained": 5,
+      "choicesMade": [
+        {
+          "type": "subclass",
+          "selections": ["School of Evocation"]
+        }
+      ],
+      "featuresGained": ["Evocation Savant", "Sculpt Spells"],
+      "resourcesGained": []
+    },
+    {
+      "level": 3,
+      "hitPointsGained": 4,
+      "choicesMade": [],
+      "featuresGained": [],
+      "resourcesGained": []
+    },
+    {
+      "level": 4,
+      "hitPointsGained": 5,
+      "choicesMade": [
+        {
+          "type": "ability-score-improvement",
+          "selections": ["Intelligence +2"]
+        }
+      ],
+      "featuresGained": [],
+      "resourcesGained": []
+    },
+    {
+      "level": 5,
+      "hitPointsGained": 4,
+      "choicesMade": [],
+      "featuresGained": [],
+      "resourcesGained": []
+    }
+  ]
+}

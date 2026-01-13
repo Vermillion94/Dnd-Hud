@@ -1,5 +1,7 @@
 import { Character } from '../types/character';
 import ResourceTracker from './ResourceTracker';
+import RestPanel from './RestPanel';
+import SpellManager from './SpellManager';
 import { motion } from 'framer-motion';
 
 interface CharacterHUDProps {
@@ -135,6 +137,14 @@ function CharacterHUD({ character, onCharacterUpdate }: CharacterHUDProps) {
                 ))}
               </div>
             </div>
+
+            {/* Rest Panel */}
+            <RestPanel character={character} onCharacterUpdate={onCharacterUpdate} />
+
+            {/* Spell Manager (if spellcaster) */}
+            {character.spellcasting && (
+              <SpellManager character={character} onCharacterUpdate={onCharacterUpdate} />
+            )}
 
             {/* Features */}
             <div className="bg-dnd-card rounded-lg p-6 max-h-96 overflow-y-auto">

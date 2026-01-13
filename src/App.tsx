@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
 import CharacterHUD from './components/CharacterHUD';
+import LevelUpWizard from './components/LevelUpWizard';
+import DiceRoller from './components/DiceRoller';
 import { Character } from './types/character';
+import { ClassDefinition } from './types/classDefinition';
 import {
   importCharacter,
   exportCharacter,
   loadExampleCharacter,
+  importClassDefinition,
 } from './utils/fileImportExport';
 import {
   saveCharacterToStorage,
@@ -16,6 +20,9 @@ function App() {
   const [character, setCharacter] = useState<Character | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showLevelUp, setShowLevelUp] = useState(false);
+  const [showDiceRoller, setShowDiceRoller] = useState(false);
+  const [classDefinition, setClassDefinition] = useState<ClassDefinition | null>(null);
 
   // Load character from local storage on mount
   useEffect(() => {
@@ -69,6 +76,30 @@ function App() {
 
   const handleNewCharacter = () => {
     setCharacter(null);
+    setClassDefinition(null);
+  };
+
+  const handleLoadClass = async () => {
+    try {
+      setError(null);
+      const classDef = await importClassDefinition();
+      setClassDefinition(classDef);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to import class definition');
+    }
+  };
+
+  const handleLevelUp = () => {
+    if (!classDefinition) {
+      setError('Please load a class definition first');
+      return;
+    }
+    setShowLevelUp(true);
+  };
+
+  const handleLevelUpComplete = (updatedCharacter: Character) => {
+    setCharacter(updatedCharacter);
+    setShowLevelUp(false);
   };
 
   if (loading) {
@@ -91,6 +122,27 @@ function App() {
               </h2>
               <div className="flex gap-3">
                 <button
+                  onClick={() => setShowDiceRoller(true)}
+                  className="px-4 py-2 bg-purple-700 text-white rounded-lg hover:bg-purple-600 transition-colors"
+                >
+                  🎲 Roll
+                </button>
+                {classDefinition ? (
+                  <button
+                    onClick={handleLevelUp}
+                    className="px-4 py-2 bg-dnd-accent text-dnd-bg font-semibold rounded-lg hover:bg-yellow-500 transition-colors"
+                  >
+                    Level Up
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleLoadClass}
+                    className="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                  >
+                    Load Class
+                  </button>
+                )}
+                <button
                   onClick={handleExport}
                   className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
                 >
@@ -106,6 +158,19 @@ function App() {
             </div>
           </div>
           <CharacterHUD character={character} onCharacterUpdate={setCharacter} />
+
+          {/* Level Up Wizard */}
+          {showLevelUp && classDefinition && (
+            <LevelUpWizard
+              character={character}
+              classDefinition={classDefinition}
+              onComplete={handleLevelUpComplete}
+              onCancel={() => setShowLevelUp(false)}
+            />
+          )}
+
+          {/* Dice Roller */}
+          {showDiceRoller && <DiceRoller onClose={() => setShowDiceRoller(false)} />}
         </div>
       ) : (
         <div className="flex items-center justify-center min-h-screen">

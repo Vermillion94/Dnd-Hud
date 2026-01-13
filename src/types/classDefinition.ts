@@ -56,6 +56,14 @@ export interface LevelDefinition {
   spellSlots?: number[];
   spellsKnown?: number;
   cantripsKnown?: number;
+
+  // Spell level unlocked at this level (e.g., 3rd level for 2nd level spells)
+  spellLevelUnlocked?: number;
+
+  // Subclass features gained at this level (organized by subclass name)
+  subclassFeatures?: {
+    [subclassName: string]: FeatureGrant[];
+  };
 }
 
 export interface FeatureGrant {
@@ -111,6 +119,7 @@ export interface ResourceGrant {
   max: number | string; // Number or formula
   rechargeOn: 'short-rest' | 'long-rest' | 'dawn' | 'manual' | 'none';
   displayType: 'slots' | 'number' | 'bar';
+  conditional?: string; // e.g., "School of Evocation" - only grant if this condition is met
 }
 
 export interface SpellcastingDefinition {

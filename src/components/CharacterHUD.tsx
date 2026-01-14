@@ -1,6 +1,7 @@
 import { Character } from '../types/character';
 import ResourceTracker from './ResourceTracker';
 import SpellManager from './SpellManager';
+import Tooltip from './Tooltip';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { getTotalLevel, getClassDisplayString, migrateToMultiClass } from '../utils/characterUtils';
@@ -10,10 +11,12 @@ interface CharacterHUDProps {
   onCharacterUpdate: (character: Character) => void;
 }
 
-type TabType = 'portrait' | 'inventory' | 'features' | 'spells' | 'resources';
+type TabType = 'portrait' | 'inventory' | 'features' | 'spells' | 'resources' | 'skills';
 
 function CharacterHUD({ character: rawCharacter, onCharacterUpdate }: CharacterHUDProps) {
   const [activeTab, setActiveTab] = useState<TabType>('portrait');
+  const [editingHP, setEditingHP] = useState(false);
+  const [hpInputValue, setHpInputValue] = useState('');
 
   // Migrate legacy single-class characters to multi-class format
   const character = migrateToMultiClass(rawCharacter);
@@ -64,6 +67,27 @@ function CharacterHUD({ character: rawCharacter, onCharacterUpdate }: CharacterH
       },
     };
     onCharacterUpdate(updatedCharacter);
+  };
+
+  const handleHPEdit = () => {
+    setHpInputValue(character.hitPoints.current.toString());
+    setEditingHP(true);
+  };
+
+  const handleHPSubmit = () => {
+    const value = parseInt(hpInputValue);
+    if (!isNaN(value)) {
+      handleHPUpdate(value);
+    }
+    setEditingHP(false);
+  };
+
+  const handleHPInputKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleHPSubmit();
+    } else if (e.key === 'Escape') {
+      setEditingHP(false);
+    }
   };
 
   const handleShortRest = () => {
@@ -163,14 +187,26 @@ function CharacterHUD({ character: rawCharacter, onCharacterUpdate }: CharacterH
             </h3>
             <div className="space-y-3 pb-4">
               {character.features.map((feature, index) => (
-                <div
+                <Tooltip
                   key={index}
-                  className="border-l-4 border-dnd-accent pl-3 py-2 bg-gray-800/50 rounded-r"
+                  content={
+                    <div>
+                      <div className="font-semibold text-dnd-accent mb-1">{feature.name}</div>
+                      <div className="text-xs text-gray-400 mb-2">{feature.source}</div>
+                      <div className="text-sm">{feature.description}</div>
+                      {feature.usesResource && (
+                        <div className="text-xs text-purple-400 mt-2">
+                          Uses: {feature.usesResource}
+                        </div>
+                      )}
+                    </div>
+                  }
                 >
-                  <h4 className="font-semibold text-white">{feature.name}</h4>
-                  <p className="text-sm text-gray-400 mt-1">{feature.description}</p>
-                  <p className="text-xs text-gray-500 mt-1">{feature.source}</p>
-                </div>
+                  <div className="border-l-4 border-dnd-accent pl-3 py-2 bg-gray-800/50 rounded-r hover:bg-gray-800/70 transition-colors cursor-help">
+                    <h4 className="font-semibold text-white">{feature.name}</h4>
+                    <p className="text-xs text-gray-500 mt-1">{feature.source}</p>
+                  </div>
+                </Tooltip>
               ))}
             </div>
           </div>
@@ -226,6 +262,98 @@ function CharacterHUD({ character: rawCharacter, onCharacterUpdate }: CharacterH
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        );
+
+      case 'skills':
+        return (
+          <div className="h-full overflow-y-auto px-4">
+            <h3 className="text-xl font-medieval text-dnd-accent mb-4 sticky top-0 bg-gray-900/95 py-2">
+              Skills & Proficiencies
+            </h3>
+            <div className="space-y-4 pb-4">
+              {/* Skills */}
+              <div>
+                <h4 className="text-lg font-medieval text-dnd-accent mb-3">Skills</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {character.proficiencies.skills.map((skill) => {
+                    const ability = getSkillAbility(skill.skill);
+                    const abilityMod = Math.floor((character.abilityScores[ability] - 10) / 2);
+                    const profBonus = skill.expertise ? character.proficiencyBonus * 2 : skill.proficient ? character.proficiencyBonus : 0;
+                    const totalBonus = abilityMod + profBonus;
+
+                    return (
+                      <div
+                        key={skill.skill}
+                        className={`flex items-center justify-between p-3 rounded-lg ${
+                          skill.expertise
+                            ? 'bg-purple-900/30 border border-purple-500/50'
+                            : skill.proficient
+                            ? 'bg-dnd-accent/20 border border-dnd-accent/50'
+                            : 'bg-gray-800/50 border border-gray-700/50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          {skill.expertise && <span className="text-purple-400">⭐⭐</span>}
+                          {skill.proficient && !skill.expertise && <span className="text-dnd-accent">⭐</span>}
+                          <div>
+                            <div className="text-sm font-semibold text-white">{skill.skill}</div>
+                            <div className="text-xs text-gray-400">{ability.substring(0, 3).toUpperCase()}</div>
+                          </div>
+                        </div>
+                        <div className="text-lg font-bold text-dnd-accent">
+                          {totalBonus >= 0 ? '+' : ''}{totalBonus}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Saving Throws */}
+              <div>
+                <h4 className="text-lg font-medieval text-dnd-accent mb-3">Saving Throws</h4>
+                <div className="grid grid-cols-3 gap-2">
+                  {(['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'] as const).map((ability) => {
+                    const abilityMod = Math.floor((character.abilityScores[ability] - 10) / 2);
+                    const isProficient = character.proficiencies.savingThrows.includes(ability);
+                    const totalBonus = abilityMod + (isProficient ? character.proficiencyBonus : 0);
+
+                    return (
+                      <div
+                        key={ability}
+                        className={`flex items-center justify-between p-3 rounded-lg ${
+                          isProficient
+                            ? 'bg-dnd-accent/20 border border-dnd-accent/50'
+                            : 'bg-gray-800/50 border border-gray-700/50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          {isProficient && <span className="text-dnd-accent text-sm">⭐</span>}
+                          <div className="text-sm font-semibold text-white">
+                            {ability.substring(0, 3).toUpperCase()}
+                          </div>
+                        </div>
+                        <div className="text-lg font-bold text-dnd-accent">
+                          {totalBonus >= 0 ? '+' : ''}{totalBonus}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Other Proficiencies */}
+              <div>
+                <h4 className="text-lg font-medieval text-dnd-accent mb-3">Other Proficiencies</h4>
+                <div className="space-y-3">
+                  <ProficiencySection title="Armor" items={character.proficiencies.armor} />
+                  <ProficiencySection title="Weapons" items={character.proficiencies.weapons} />
+                  <ProficiencySection title="Tools" items={character.proficiencies.tools} />
+                  <ProficiencySection title="Languages" items={character.proficiencies.languages} />
+                </div>
+              </div>
             </div>
           </div>
         );
@@ -344,6 +472,12 @@ function CharacterHUD({ character: rawCharacter, onCharacterUpdate }: CharacterH
                   icon="⚡"
                   label="Resources"
                 />
+                <TabButton
+                  active={activeTab === 'skills'}
+                  onClick={() => setActiveTab('skills')}
+                  icon="🎯"
+                  label="Skills"
+                />
                 {character.spellcasting && (
                   <TabButton
                     active={activeTab === 'spells'}
@@ -432,13 +566,30 @@ function CharacterHUD({ character: rawCharacter, onCharacterUpdate }: CharacterH
             {character.spellcasting?.spellSlots
               .filter((slot) => slot.max > 0)
               .map((slot) => (
-                <SpellSlotTracker
+                <Tooltip
                   key={slot.level}
-                  level={slot.level}
-                  max={slot.max}
-                  used={slot.used}
-                  onUpdate={(newUsed) => handleSpellSlotUpdate(slot.level, newUsed)}
-                />
+                  content={
+                    <div>
+                      <div className="font-semibold text-purple-400 mb-1">Level {slot.level} Spell Slots</div>
+                      <div className="text-sm">
+                        Available: {slot.max - slot.used} / {slot.max}
+                      </div>
+                      <div className="text-xs text-gray-400 mt-2">
+                        Restores on long rest
+                      </div>
+                      <div className="text-xs text-gray-300 mt-1">
+                        Click a slot to use/restore it
+                      </div>
+                    </div>
+                  }
+                >
+                  <SpellSlotTracker
+                    level={slot.level}
+                    max={slot.max}
+                    used={slot.used}
+                    onUpdate={(newUsed) => handleSpellSlotUpdate(slot.level, newUsed)}
+                  />
+                </Tooltip>
               ))}
           </div>
         </div>
@@ -473,10 +624,27 @@ function CharacterHUD({ character: rawCharacter, onCharacterUpdate }: CharacterH
                     −
                   </button>
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-white">
-                      {character.hitPoints.current}
-                    </div>
-                    <div className="text-sm text-gray-400">/ {character.hitPoints.max}</div>
+                    {editingHP ? (
+                      <div className="flex flex-col items-center gap-1">
+                        <input
+                          type="number"
+                          value={hpInputValue}
+                          onChange={(e) => setHpInputValue(e.target.value)}
+                          onKeyDown={handleHPInputKeyDown}
+                          onBlur={handleHPSubmit}
+                          autoFocus
+                          className="w-20 text-3xl font-bold text-center bg-gray-800 text-white border-2 border-dnd-accent rounded px-2"
+                        />
+                        <div className="text-xs text-gray-400">Press Enter</div>
+                      </div>
+                    ) : (
+                      <div onClick={handleHPEdit} className="cursor-pointer hover:bg-gray-800/50 rounded px-2 transition-colors">
+                        <div className="text-3xl font-bold text-white">
+                          {character.hitPoints.current}
+                        </div>
+                        <div className="text-sm text-gray-400">/ {character.hitPoints.max}</div>
+                      </div>
+                    )}
                   </div>
                   <button
                     onClick={() => handleHPUpdate(character.hitPoints.current + 1)}
@@ -669,6 +837,44 @@ function OrnateCorner({ position }: { position: 'top-left' | 'top-right' | 'bott
       </svg>
     </div>
   );
+}
+
+function ProficiencySection({ title, items }: { title: string; items: string[] }) {
+  if (items.length === 0) return null;
+
+  return (
+    <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700/50">
+      <div className="text-sm font-semibold text-dnd-accent mb-2">{title}</div>
+      <div className="text-sm text-gray-300">
+        {items.join(', ')}
+      </div>
+    </div>
+  );
+}
+
+function getSkillAbility(skillName: string): 'strength' | 'dexterity' | 'constitution' | 'intelligence' | 'wisdom' | 'charisma' {
+  const skillAbilityMap: { [key: string]: 'strength' | 'dexterity' | 'constitution' | 'intelligence' | 'wisdom' | 'charisma' } = {
+    'Acrobatics': 'dexterity',
+    'Animal Handling': 'wisdom',
+    'Arcana': 'intelligence',
+    'Athletics': 'strength',
+    'Deception': 'charisma',
+    'History': 'intelligence',
+    'Insight': 'wisdom',
+    'Intimidation': 'charisma',
+    'Investigation': 'intelligence',
+    'Medicine': 'wisdom',
+    'Nature': 'intelligence',
+    'Perception': 'wisdom',
+    'Performance': 'charisma',
+    'Persuasion': 'charisma',
+    'Religion': 'intelligence',
+    'Sleight of Hand': 'dexterity',
+    'Stealth': 'dexterity',
+    'Survival': 'wisdom',
+  };
+
+  return skillAbilityMap[skillName] || 'intelligence';
 }
 
 export default CharacterHUD;
